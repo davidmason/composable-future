@@ -66,7 +66,7 @@ Future.prototype.fail = function(err) {
     });
 }
 
-Future.prototype.map = function(fn) {
+Future.prototype.fmap = function(fn) {
     var fut = new Future();
     this.ready(function(val) {
         try {
@@ -82,7 +82,7 @@ Future.prototype.map = function(fn) {
     return fut;
 }
 
-Future.prototype.mapError = function(fn) {
+Future.prototype.fmapError = function(fn) {
     var fut = new Future();
     this.ready(function(val) {
         fut.complete( val );
@@ -117,16 +117,16 @@ Future.prototype.flatten = function() {
 }
 
 Future.prototype.flatMap = function( fn ) {
-    return this.map(fn).flatten();
+    return this.fmap(fn).flatten();
 }
 
 Future.prototype.flatMapError = function( fn ) {
-    return this.mapError(fn).flatten();
+    return this.fmapError(fn).flatten();
 }
 
 Future.lift1 = function(fn) {
     return function(fut) {
-        return fut.map(f);
+        return fut.fmap(f);
     }
 }
 
@@ -212,13 +212,13 @@ Future.delay = function(v, ms) {
 
 function logF(f) {
     f.do(function(v) {
-        console.log('Future completed', v);
+        console.log('Future completed with', v);
     });
 }
 
 function logErrF(f) {
     f.doError(function(err) {
-        console.log('Future failed', err);
+        console.log('Future failed with', err);
     });
 }
 
@@ -257,5 +257,3 @@ result = readDirF('testdir').flatMap(function(files) {
 });
 
 logF( result );
-
-
