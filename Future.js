@@ -176,7 +176,10 @@ Future.prototype.do = function(action) {
         action(this.value);
         fut.complete(this.value);
     } else {
-        this.actions.push(action);
+        this.actions.push(function(v) {
+			action(v);
+			fut.complete(v);
+		});
     }
     return fut;
 }
@@ -187,7 +190,10 @@ Future.prototype.doError = function(action) {
         action(this.error);
         fut.fail(this.error);
     } else {
-        this.failactions.push(action);
+        this.actions.push(function(err) {
+			action(err);
+			fut.fail(err);
+		});
     }
     return fut;
 }
