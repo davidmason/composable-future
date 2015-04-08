@@ -22,6 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+/* changes
+    08-04-2015: complete and fail methods must release all subscribers (both failslots ans slots), same as action subscribers
+*/
+
 function toArray(args) {
     return Array.prototype.slice.call(args);
 }
@@ -59,12 +63,14 @@ Future.prototype.complete = function(val) {
         this.slots[i](val);
     }
     this.slots = null;
+    this.failslots = null; // must also free this
     
     setTimeout(function() {
         for(var i=0, len=me.actions.length; i<len; i++) {
             me.actions[i](val);
         }
         me.actions = null;
+        me.failactions = null; // must also free this
     });
 }
 
@@ -79,13 +85,15 @@ Future.prototype.fail = function(err) {
     for(var i=0, len=this.failslots.length; i<len; i++) {
         this.failslots[i](err);
     }
-    this.failslots = null;
+    this.slots = null; // must also free this
+    this.failslots = null; 
     
     
     setTimeout(function() {
         for(var i=0, len=me.failactions.length; i<len; i++) {
             me.failactions[i](err);
         }
+        me.actions = null; // must also free this
         me.failactions = null;
     });
 }
