@@ -2,7 +2,7 @@
   "name": "composable-future",
   "version": "1.0.0",
   "description": "Straightforward futures that can be composed. Based on http://tech.pro/blog/6742/callback-to-future-functor-applicative-monad.",
-  "main": "Future.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

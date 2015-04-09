@@ -26,6 +26,8 @@ SOFTWARE.
     08-04-2015: complete and fail methods must release all subscribers (both failslots ans slots), same as action subscribers
 */
 
+module.exports = Future;
+
 function toArray(args) {
     return Array.prototype.slice.call(args);
 }
@@ -247,51 +249,3 @@ Future.delay = function(v, ms) {
     }, ms);
     return f;
 }
-
-function logF(f) {
-    f.do(function(v) {
-        console.log('Future completed with', v);
-    });
-}
-
-function logErrF(f) {
-    f.doError(function(err) {
-        console.log('Future failed with', err);
-    });
-}
-
-
-var fs = require('fs');
-
-function readFileF(file, options) {
-    var f = new Future();
-    fs.readFile(file, options, function (err, data) {
-        if (err) f.fail(err);
-        else
-            f.complete(data);
-    });
-    return f;
-}
-
-function readDirF(path) {
-    var f = new Future();
-    fs.readdir(path, function (err, files) {
-        if (err) f.fail(err);
-        else 
-            f.complete(files);
-    });
-    return f;
-}
-
-var concat = Future.lift(function() {
-    return toArray(arguments).join(' ');
-});
-
-result = readDirF('testdir').flatMap(function(files) {
-    var filesF = files.map( function(file) {        
-        return readFileF('testdir/' + file, {encoding: 'utf8'});
-    });
-    return concat.apply(null, filesF);
-});
-
-logF( result );
