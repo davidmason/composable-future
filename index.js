@@ -42,14 +42,14 @@ function Future() {
 Future.prototype.ready = function(slot) {    
     if(this.completed)
         slot(this.value);
-    else
+    else if (!this.hasFailed)
         this.slots.push(slot);
 }
 
 Future.prototype.failed = function(slot) {        
     if(this.hasFailed)
         slot(this.error);
-    else
+    else if (!this.completed)
         this.failslots.push(slot);
 }
 
@@ -77,7 +77,7 @@ Future.prototype.complete = function(val) {
 }
 
 Future.prototype.fail = function(err) {
-    var me = this;    
+    var me = this;
     if(this.completed || this.hasFailed)
         throw "Can't complete an already settled future!"
     
@@ -108,7 +108,6 @@ Future.prototype.fmap = function(fn) {
         } catch(err) {
             fut.fail(err);
         }
-        
     });
     this.failed(function(err) {
         fut.fail( err );
@@ -138,15 +137,13 @@ Future.prototype.flatten = function() {
         fut.fail(err);
     });
     this.ready(function(fut2) {
-        fut2.failed( function(err){
-            fut.fail(err);
-        } );
-    }); 
-    this.ready(function(fut2) {
         fut2.ready( function(val){
             fut.complete(val);
         } );
-    });      
+        fut2.failed( function(err){
+            fut.fail(err);
+        } );
+    });
     return fut;
 }
 
@@ -209,7 +206,7 @@ Future.prototype.do = function(action) {
     if(this.completed) {
         action(this.value);
         fut.complete(this.value);
-    } else {
+    } else if (!this.hasFailed) {
         this.actions.push(function(v) {
 			action(v);
 			fut.complete(v);
@@ -223,8 +220,8 @@ Future.prototype.doError = function(action) {
     if(this.hasFailed) {
         action(this.error);
         fut.fail(this.error);
-    } else {
-        this.actions.push(function(err) {
+    } else if (!this.completed) {
+        this.failactions.push(function(err) {
 			action(err);
 			fut.fail(err);
 		});
