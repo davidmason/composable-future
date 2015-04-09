@@ -1,0 +1,26 @@
+{
+  "name": "composable-future",
+  "version": "1.0.0",
+  "description": "Straightforward futures that can be composed. Based on http://tech.pro/blog/6742/callback-to-future-functor-applicative-monad.",
+  "main": "Future.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/davidmason/composable-future.git"
+  },
+  "keywords": [
+    "future",
+    "futures"
+  ],
+  "author": "David Mason <drdmason@gmail.com> (https://github.com/davidmason)",
+  "contributors": [
+    "Yassine Elouafi (https://github.com/yelouafi)"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/davidmason/composable-future/issues"
+  },
+  "homepage": "https://github.com/davidmason/composable-future"
+}
